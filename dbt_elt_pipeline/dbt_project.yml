@@ -36,6 +36,7 @@ models:
       +materialized: view
       snowflake_warehouse: wh_dbt_elt
     marts:
+      +enabled : true
       +materialized: table
       snowflake_warehouse: wh_dbt_elt
 # vars:
