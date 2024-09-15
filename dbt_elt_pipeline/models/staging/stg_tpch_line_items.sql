@@ -1,6 +1,6 @@
 select
     {{
-        dbt_utils.dbt_utils.generate_surrogate_key([
+        dbt_utils.generate_surrogate_key([
             'l_orderkey',
             'l_linenumber'
         ])
@@ -16,3 +16,4 @@ select
 	l_tax as tax_rate
 from 
     {{ source('tpch' , 'lineitem')}}
+    
