@@ -32,5 +32,11 @@ clean-targets:         # directories to be removed by `dbt clean`
 models:
   dbt_elt_pipeline:
     # Config indicated by + and applies to all files under models/example/
-    example:
+    staging:
       +materialized: view
+      #snowflake_warehouse: wh_dbt_elt
+    marts:
+      +materialized: table
+      #snowflake_warehouse: wh_dbt_elt
+
+
