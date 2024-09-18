@@ -1,3 +1,12 @@
+  {{
+        config(
+            materialized='table'
+        )
+    }}
+
+
+
+
 select
     line_item.order_item_key,
     line_item.part_key,
