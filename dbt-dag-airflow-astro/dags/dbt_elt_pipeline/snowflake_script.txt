@@ -1,0 +1,29 @@
+use role accountadmin;
+
+create warehouse wh_dbt_elt with warehouse_size = 'x-small';
+create database db_dbt_elt ;
+create role role_dbt_elt;
+
+show grants on warehouse wh_dbt_elt;
+
+grant usage on warehouse wh_dbt_elt to role role_dbt_elt;
+create user  theblue;
+grant role role_dbt_elt to user theblu;
+grant all on database db_dbt_elt to role role_dbt_elt;
+
+show users;
+drop user theblue;
+
+use role role_dbt_elt;
+
+create schema db_dbt_elt.schema_dbt_elt;
+
+use role accountadmin;
+
+drop warehouse wh_dbt_elt if exists;
+drop database db_dbt_elt if exists;
+drop role role_dbt_elt if exists;
+
+current_account();
+
+
