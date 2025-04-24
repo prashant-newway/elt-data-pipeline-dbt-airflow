@@ -1,0 +1,44 @@
+.
+├── dbt-dag-af
+│   ├── dags
+│   │   └── dbt_dag.py
+│   ├── Dockerfile
+│   ├── include
+│   │   └── dbt_elt_pipeline
+│   │       ├── analyses
+│   │       ├── dbt_project.yml
+│   │       ├── macros
+│   │       │   └── pricing.sql
+│   │       ├── models
+│   │       │   ├── marts
+│   │       │   │   ├── fct_orders.sql
+│   │       │   │   ├── generic_tests.yml
+│   │       │   │   ├── int_order_items_summary.sql
+│   │       │   │   └── int_order_items.sql
+│   │       │   └── staging
+│   │       │       ├── stg_tpch_line_items.sql
+│   │       │       ├── stg_tpch_orders.sql
+│   │       │       └── tpch_sources.yml
+│   │       ├── package-lock.yml
+│   │       ├── packages.yml
+│   │       ├── README.md
+│   │       ├── seeds
+│   │       ├── snapshots
+│   │       ├── snowflake_script.txt
+│   │       └── tests
+│   │           ├── fct_orders_date_valid.sql
+│   │           └── fct_orders_discount.sql
+│   ├── logs
+│   │   └── dbt.log
+│   ├── packages.txt
+│   ├── README.md
+│   ├── requirements.txt
+│   └── tests
+│       └── dags
+│           └── test_dag_example.py
+├── logs
+│   └── dbt.log
+├── readme.md
+└── tree.txt
+
+17 directories, 25 files
