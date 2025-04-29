@@ -125,8 +125,8 @@ For running and testing dbt models locally and in the pipeline.
 
 3. **Define Sources & Staging**
    - Create source and staging files
-   
-    -  staging models models/staging/stg_tpch_orders.sql
+   - staging models:
+    -  file :models/staging/stg_tpch_orders.sql
 ```
    select
     o_orderkey as order_key,
@@ -138,9 +138,7 @@ from
     {{ source('tpch', 'orders') }}
 
 ```
-
-- For models/staging/tpch/stg_tpch_line_items.sql
-
+   - File: models/staging/tpch/stg_tpch_line_items.sql
 ```
 select
     {{
@@ -163,13 +161,19 @@ from
 
 
 4. **Write Reusable Macros**
-   - Create dbt macros for common logic
+   -  File: macros/pricing.sql
+   ```
+   {% macro discounted_amount(extended_price, discount_percentage, scale=2) %}
+    (-1 * {{extended_price}} * {{discount_percentage}})::decimal(16, {{ scale }})
+    {% endmacro %}```
 
 5. **Build Data Models**
-   - Develop intermediate  and fact tables
+   - Develop intermediate  and fact tables by transforming and aggregate staging data.
+   
 
 6. **Validate with Tests**
-   - Implement generic tests 
+   - Implement Generic Tests – defined in generic_tests.yml for primary keys and accepted values.
+   - Singular Tests – SQL-based logic in: tests/fct_orders_discount.sql , tests/fct_orders_date_valid.sql
 
 7. **Deploy via Airflow**
    - Install dependencies in Docker
