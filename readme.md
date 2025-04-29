@@ -49,11 +49,11 @@ For running and testing dbt models locally and in the pipeline.
 ## Process Overview
 
 1. **Extract & Load**
-   - Source data from Snowflake's sample datasets (TPCH_SF1)
-   - Make available for transformation
+   - Source data from Snowflake's sample datasets (TPCH_SF1)( https://docs.snowflake.com/en/user-guide/sample-data-tpch )
 
 2. **Transform with dbt**
    - **Staging Layer**: Clean, rename, standardize fields
+
    - **Intermediate Layer**: Apply business logic, joins, transformations
    - **Mart Layer**: Generate fact tables with relevant metrics
 
@@ -124,20 +124,73 @@ For running and testing dbt models locally and in the pipeline.
    - Assign appropriate warehouses to models
 
 3. **Define Sources & Staging**
-   - Declare raw tables in sources.yml
-   - Build staging models
-   - Implement constraints and relationships
+   - Create source and staging files
+    - yml source file:
+    ```
+    version: 2
+
+sources:
+  - name: tpch
+    database: snowflake_sample_data
+    schema: tpch_sf1
+    tables:
+      - name: orders
+        columns:
+          - name: o_orderkey
+            tests:
+              - unique
+              - not_null
+      - name: lineitem
+        columns:
+          - name: l_orderkey
+            tests:
+              - relationships:
+                  to: source('tpch', 'orders')
+                  field: o_orderkey
+
+```
+    -  staging models models/staging/stg_tpch_orders.sql
+   ```
+   select
+    o_orderkey as order_key,
+    o_custkey as customer_key,
+    o_orderstatus as status_code,
+    o_totalprice as total_price,
+    o_orderdate as order_date
+from
+    {{ source('tpch', 'orders') }}
+
+```
+- For models/staging/tpch/stg_tpch_line_items.sql
+```
+select
+    {{
+        dbt_utils.generate_surrogate_key([
+            'l_orderkey',
+            'l_linenumber'
+        ])
+    }} as order_item_key,
+	l_orderkey as order_key,
+	l_partkey as part_key,
+	l_linenumber as line_number,
+	l_quantity as quantity,
+	l_extendedprice as extended_price,
+	l_discount as discount_percentage,
+	l_tax as tax_rate
+from
+    {{ source('tpch', 'lineitem') }}
+```
+
+
 
 4. **Write Reusable Macros**
    - Create dbt macros for common logic
 
 5. **Build Data Models**
-   - Develop intermediate models
-   - Create fact tables (e.g., fct_orders)
+   - Develop intermediate  and fact tables
 
 6. **Validate with Tests**
-   - Implement generic tests (not null, unique, referential integrity)
-   - Write custom SQL assertions for business rules
+   - Implement generic tests 
 
 7. **Deploy via Airflow**
    - Install dependencies in Docker
