@@ -1,65 +1,66 @@
 # ELT Pipeline with dbt, Snowflake & Airflow
-This project demonstrates how to build a robust ELT (Extract, Load, Transform) pipeline using modern data stack tools:
+This project builds a robust ELT (Extract, Load, Transform) pipeline using industry-standard tools. The pipeline 
+1. extracts data from Snowflake's sample datasets, 
+2. transforms it using dbt, 
+3. and orchestrates the workflow with Apache Airflow.
 
-Snowflake for cloud data warehousing
+# Prerequisites
+- Snowflake account
+Required for creating warehouses, databases, and running queries.
 
-dbt (Data Build Tool) for transformation and testing
+- Docker
+To containerize and run the Airflow environment locally.
 
-Apache Airflow for orchestration
+- Apache Airflow (via Astronomer Cosmos)
+Used for scheduling and orchestrating dbt jobs.
 
-# Tech Stack
+- dbt CLI (dbt-snowflake)
+For running and testing dbt models locally and in the pipeline.
 
-Tool	Purpose
-Snowflake	Scalable data warehouse
-dbt	SQL-based transformation layer
-Airflow	Workflow orchestration
-Docker	Environment consistency
+# Features
+- Modular dbt models: Staging → Intermediate → Fact tables
 
-# Architecture Overview
-Extract & Load: Data is sourced from Snowflake's sample datasets (e.g., TPCH_SF1) and made available for transformation.
+- Test-driven development: Generic & custom validations
 
-Transform: dbt is used to define, test, and build data models. This includes staging, intermediate, and mart layers.
+- Reusable macros for DRY transformations
 
-Orchestrate: Airflow schedules and manages dbt runs as part of a DAG.
-
-# Getting Started
-Step 1: Setup Snowflake
-Provision a dedicated warehouse, database, role, and schema for dbt transformations.
-
-Assign proper grants to ensure secure access.
+- Scheduled DAGs with Cosmos for easy Airflow integration and Pipeline orchestration
 
 
-Step 2: Configure dbt Profile
-Define how dbt connects to Snowflake via the profiles.yml file.
+# ELT Data Flow
 
-Assign appropriate warehouses to your models depending on their layer (e.g., view vs table materializations).
+```
+┌───────────────────┐     ┌───────────────────┐     ┌───────────────────┐
+│                   │     │                   │     │                   │
+│  Extract & Load   │────▶│     Transform     │────▶│      Outputs      │
+│   (Snowflake)     │     │      (dbt)        │     │   (Fact Tables)   │
+│                   │     │                   │     │                   │
+└───────────────────┘     └───────────────────┘     └───────────────────┘
+                                   ▲                         
+                                   │                         
+                          ┌────────┴──────────┐              
+                          │                   │              
+                          │    Orchestrate    │              
+                          │    (Airflow)      │              
+                          │                   │              
+                          └───────────────────┘              
+```
 
-Step 3: Define Sources & Staging
-Declare raw source tables in a YAML file (sources.yml).
+## Process Overview
 
-Build staging models to clean, rename, and standardize raw data fields.
+1. **Extract & Load**
+   - Source data from Snowflake's sample datasets (TPCH_SF1)
+   - Make available for transformation
 
-Include constraints and relationships through dbt's testing framework.
+2. **Transform with dbt**
+   - **Staging Layer**: Clean, rename, standardize fields
+   - **Intermediate Layer**: Apply business logic, joins, transformations
+   - **Mart Layer**: Generate fact tables with relevant metrics
 
-Step 4: Write Reusable Macros
-Use dbt macros to encapsulate logic and avoid repetition (e.g., discount calculations).
+3. **Orchestrate with Airflow**
+   - Schedule and manage dbt runs as part of DAG
+   - Utilize Cosmos for dbt orchestration
 
-Step 5: Build Data Models
-Create intermediate models for business logic joins and transformations.
-
-Generate fact tables (e.g., fct_orders) that summarize relevant metrics.
-
-Step 6: Validate with Tests
-Use generic tests (not null, unique, referential integrity).
-
-Create singular tests (custom SQL assertions for business rules).
-
-Step 7: Deploy via Airflow
-Install dbt-snowflake and Airflow dependencies in Docker.
-
-Create and configure a Snowflake connection in Airflow.
-
-Use Cosmos to orchestrate dbt runs within a DAG.
 
 # Project Structure
 ```
@@ -108,31 +109,47 @@ Use Cosmos to orchestrate dbt runs within a DAG.
 
 17 directories, 25 files
 
+
 ```
 
-# Prerequisites
-- A Snowflake account
 
-- Docker (with Compose)
+## Implementation Steps
 
-- Apache Airflow
+1. **Setup Snowflake**
+   - Provision warehouse, database, role, schema
+   - Configure security with proper grants
 
-- dbt CLI
+2. **Configure dbt Profile**
+   - Define Snowflake connection in profiles.yml
+   - Assign appropriate warehouses to models
 
-# Features
-Modular dbt models: Staging → Intermediate → Fact tables
+3. **Define Sources & Staging**
+   - Declare raw tables in sources.yml
+   - Build staging models
+   - Implement constraints and relationships
 
-Test-driven development: Generic & custom validations
+4. **Write Reusable Macros**
+   - Create dbt macros for common logic
 
-Reusable macros for DRY transformations
+5. **Build Data Models**
+   - Develop intermediate models
+   - Create fact tables (e.g., fct_orders)
 
-Scheduled DAGs with Cosmos for easy Airflow integration
+6. **Validate with Tests**
+   - Implement generic tests (not null, unique, referential integrity)
+   - Write custom SQL assertions for business rules
 
-# Resources
-dbt Documentation
+7. **Deploy via Airflow**
+   - Install dependencies in Docker
+   - Configure Snowflake connection
+   - Use Cosmos to orchestrate dbt runs
 
-Snowflake Documentation
 
-Airflow Docs
 
-Astronomer Cosmos
+# References:
+- [dbt Documentation](https://docs.getdbt.com/docs/build/documentation)
+
+- https://docs.snowflake.com/en/
+
+
+- [Astronomer Cosmos](https://github.com/astronomer/astronomer-cosmos/)
