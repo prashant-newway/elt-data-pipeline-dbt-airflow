@@ -125,32 +125,9 @@ For running and testing dbt models locally and in the pipeline.
 
 3. **Define Sources & Staging**
    - Create source and staging files
-    - yml source file:
-    ```
-    version: 2
-
-sources:
-  - name: tpch
-    database: snowflake_sample_data
-    schema: tpch_sf1
-    tables:
-      - name: orders
-        columns:
-          - name: o_orderkey
-            tests:
-              - unique
-              - not_null
-      - name: lineitem
-        columns:
-          - name: l_orderkey
-            tests:
-              - relationships:
-                  to: source('tpch', 'orders')
-                  field: o_orderkey
-
-```
+   
     -  staging models models/staging/stg_tpch_orders.sql
-   ```
+```
    select
     o_orderkey as order_key,
     o_custkey as customer_key,
@@ -161,7 +138,9 @@ from
     {{ source('tpch', 'orders') }}
 
 ```
+
 - For models/staging/tpch/stg_tpch_line_items.sql
+
 ```
 select
     {{
